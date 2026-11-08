@@ -14,144 +14,328 @@
         body { font-family: 'Heebo', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen p-4">
+<body class="bg-amber-50/50 text-slate-800 min-h-screen p-4">
 
-    <div class="max-w-4xl mx-auto p-2 md:p-6 space-y-6">
-        <!-- כותרת ראשית ובורר חודשים -->
-        <header class="bg-white rounded-2xl shadow-sm p-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-indigo-900">ניהול תקציב משפחתי (ענן)</h1>
-                <p class="text-sm text-gray-500">מעקב משותף בזמן אמת</p>
+    <div class="max-w-5xl mx-auto p-2 md:p-6 space-y-6">
+        <!-- כותרת ראשית, לוגו, בורר חודשים וניווט טאבים -->
+        <header class="bg-white rounded-2xl shadow-md border border-amber-100 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <!-- לוגו חמוד -->
+                <div class="w-12 h-12 bg-amber-100 border border-amber-300 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+                    👛✨
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-amber-900">ניהול תקציב משפחתי</h1>
+                    <p class="text-sm text-slate-500">הבית הפיננסי שלכם</p>
+                </div>
             </div>
             
-            <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
-                <span class="text-xs font-medium text-gray-600">חודש:</span>
-                <input type="month" id="month-selector" class="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium text-indigo-900 focus:ring-2 focus:ring-indigo-500 outline-none">
+            <div class="flex flex-col md:flex-row flex-wrap items-center gap-3">
+                <!-- מעבר בין טאבים -->
+                <div class="flex flex-wrap bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
+                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition bg-amber-700 text-white shadow-sm">דשבורד</button>
+                    <button onclick="switchTab('recurring')" id="tab-recurring" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition text-slate-600 hover:text-slate-900">חיובים שוטפים</button>
+                    <button onclick="switchTab('future')" id="tab-future" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition text-slate-600 hover:text-slate-900">חיובים עתידיים</button>
+                    <button onclick="switchTab('wishlist')" id="tab-wishlist" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition text-slate-600 hover:text-slate-900">משאלות</button>
+                    <button onclick="switchTab('comparison')" id="tab-comparison" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition text-slate-600 hover:text-slate-900">השוואת חודשים</button>
+                </div>
+
+                <!-- בורר חודשים -->
+                <div id="month-selector-wrapper" class="flex items-center gap-2 bg-amber-50/80 p-2 rounded-xl border border-amber-200">
+                    <span class="text-xs font-medium text-amber-900">חודש:</span>
+                    <input type="month" id="month-selector" class="bg-white border border-amber-200 rounded-lg px-3 py-1.5 text-sm font-medium text-amber-900 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
             </div>
         </header>
 
-        <!-- סיכום מהיר -->
-        <div class="grid grid-cols-3 gap-4 text-center">
-            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 shadow-sm">
-                <span class="block text-xs text-emerald-600 font-medium">הכנסות החודש</span>
-                <span id="total-income" class="text-lg md:text-xl font-bold text-emerald-700">₪0</span>
+        <!-- ==================== טאב 1: דשבורד ==================== -->
+        <div id="section-dashboard" class="space-y-6">
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl shadow-sm">
+                    <span class="block text-xs text-emerald-700 font-medium mb-1">הכנסות החודש</span>
+                    <span id="total-income" class="text-lg md:text-xl font-bold text-emerald-800">₪0.00</span>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl shadow-sm">
+                    <span class="block text-xs text-rose-700 font-medium mb-1">הוצאות החודש</span>
+                    <span id="total-expense" class="text-lg md:text-xl font-bold text-rose-800">₪0.00</span>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl shadow-sm">
+                    <span class="block text-xs text-blue-700 font-medium mb-1">יתרה פנויה לחודש</span>
+                    <span id="net-balance" class="text-lg md:text-xl font-bold text-blue-800">₪0.00</span>
+                </div>
             </div>
-            <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 shadow-sm">
-                <span class="block text-xs text-rose-600 font-medium">הוצאות החודש</span>
-                <span id="total-expense" class="text-lg md:text-xl font-bold text-rose-700">₪0</span>
-            </div>
-            <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100 shadow-sm">
-                <span class="block text-xs text-indigo-600 font-medium">יתרה לחודש</span>
-                <span id="net-balance" class="text-lg md:text-xl font-bold text-indigo-700">₪0</span>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- טופס הוספת תנועה -->
+                <div class="bg-white rounded-2xl shadow-md border border-amber-100 p-6 md:col-span-1 h-fit">
+                    <h2 class="text-lg font-semibold mb-4 text-slate-700">הוספת תנועה חדשה</h2>
+                    <form id="transaction-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">סוג תנועה</label>
+                            <select id="type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="expense">הוצאה</option>
+                                <option value="income">הכנסה</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">תאריך</label>
+                            <input type="date" id="date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">תיאור</label>
+                            <input type="text" id="description" required placeholder="למשל: סופרמרקט, משכורת..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">סכום (₪)</label>
+                            <input type="number" id="amount" step="0.01" required min="0.01" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">קטגוריה</label>
+                            <select id="category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 focus:ring-2 focus:ring-amber-500 outline-none">
+                                <option value="דיור">דיור ושכירות</option>
+                                <option value="סופר">סופרמרקט ומזון</option>
+                                <option value="חשבונות">חשבונות (חשמל, מים, ארנונה)</option>
+                                <option value="תחבורה">תחבורה ורכב</option>
+                                <option value="בילויים">בילויים ופנאי</option>
+                                <option value="שונות">שונות / אחר</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-medium py-2.5 rounded-xl transition duration-200 text-sm shadow-sm">
+                            הוסף לרשימה
+                        </button>
+                    </form>
+                </div>
+
+                <!-- גרף ותנועות -->
+                <div class="bg-white rounded-2xl shadow-md border border-amber-100 p-6 md:col-span-2 space-y-6">
+                    <div>
+                        <h2 class="text-lg font-semibold mb-2 text-slate-700">התפלגות הוצאות לחודש הנבחר</h2>
+                        <div class="relative w-full h-56 flex justify-center items-center">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3 text-slate-700">פירוט תנועות לחודש</h2>
+                        <div class="overflow-x-auto max-h-60 overflow-y-auto">
+                            <table class="w-full text-right text-sm">
+                                <thead class="bg-amber-50 text-amber-900 text-xs uppercase sticky top-0">
+                                    <tr>
+                                        <th class="p-3">תאריך</th>
+                                        <th class="p-3">תיאור</th>
+                                        <th class="p-3">קטגוריה</th>
+                                        <th class="p-3">סכום</th>
+                                        <th class="p-3">פעולה</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transaction-list" class="divide-y divide-slate-100">
+                                    <!-- הנתונים יוזרמו לכאן -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- טופס הוספת תנועה -->
-            <div class="bg-white rounded-2xl shadow-sm p-6 md:col-span-1 h-fit">
-                <h2 class="text-lg font-semibold mb-4 text-gray-700">הוספת תנועה חדשה</h2>
-                <form id="transaction-form" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">סוג תנועה</label>
-                        <select id="type" class="w-full rounded-xl border border-gray-200 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <option value="expense">הוצאה</option>
-                            <option value="income">הכנסה</option>
-                        </select>
-                    </div>
+        <!-- ==================== טאב 2: חיובים שוטפים ==================== -->
+        <div id="section-recurring" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl shadow-md border border-amber-100 p-6 space-y-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-amber-900">חיובים שוטפים (קבועים חודשיים)</h2>
+                    <p class="text-xs text-slate-500">הוצאות אלו יתווספו אוטומטית לחישוב ההוצאות בכל חודש עד להסרתן.</p>
+                </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">תאריך</label>
-                        <input type="date" id="date" required class="w-full rounded-xl border border-gray-200 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">תיאור</label>
-                        <input type="text" id="description" required placeholder="למשל: סופרמרקט, משכורת..." class="w-full rounded-xl border border-gray-200 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">סכום (₪)</label>
-                        <input type="number" id="amount" required min="1" placeholder="0" class="w-full rounded-xl border border-gray-200 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">קטגוריה</label>
-                        <select id="category" class="w-full rounded-xl border border-gray-200 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <option value="דיור">דיור ושכירות</option>
-                            <option value="סופר">סופרמרקט ומזון</option>
-                            <option value="חשבונות">חשבונות (חשמל, מים, ארנונה)</option>
-                            <option value="תחבורה">תחבורה ורכב</option>
-                            <option value="בילויים">בילויים ופנאי</option>
-                            <option value="שונות">שונות / אחר</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition duration-200 text-sm shadow-sm">
-                        הוסף לרשימה
+                <form id="recurring-form" class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <input type="text" id="rec-name" required placeholder="שם החיוב (למשל: שכירות, ארנונה...)" class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                    <input type="number" id="rec-amount" step="0.01" required min="0.01" placeholder="סכום (₪)" class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                    <select id="rec-category" class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                        <option value="דיור">דיור ושכירות</option>
+                        <option value="סופר">סופרמרקט ומזון</option>
+                        <option value="חשבונות">חשבונות (חשמל, מים, ארנונה)</option>
+                        <option value="תחבורה">תחבורה ורכב</option>
+                        <option value="בילויים">בילויים ופנאי</option>
+                        <option value="שונות">שונות / אחר</option>
+                    </select>
+                    <button type="submit" class="bg-amber-700 hover:bg-amber-800 text-white font-medium py-2.5 rounded-xl transition duration-200 text-sm shadow-sm">
+                        הוסף חיוב שוטף
                     </button>
                 </form>
-            </div>
 
-            <!-- תצוגה -->
-            <div class="bg-white rounded-2xl shadow-sm p-6 md:col-span-2 space-y-6">
-                <div>
-                    <h2 class="text-lg font-semibold mb-2 text-gray-700">התפלגות הוצאות לחודש הנבחר</h2>
-                    <div class="relative w-full h-56 flex justify-center items-center">
-                        <canvas id="expenseChart"></canvas>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 class="text-lg font-semibold mb-3 text-gray-700">פירוט תנועות לחודש</h2>
-                    <div class="overflow-x-auto max-h-60 overflow-y-auto">
-                        <table class="w-full text-right text-sm">
-                            <thead class="bg-gray-50 text-gray-500 text-xs uppercase sticky top-0">
-                                <tr>
-                                    <th class="p-3">תאריך</th>
-                                    <th class="p-3">תיאור</th>
-                                    <th class="p-3">קטגוריה</th>
-                                    <th class="p-3">סכום</th>
-                                    <th class="p-3">פעולה</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transaction-list" class="divide-y divide-gray-100">
-                                <!-- הנתונים יוזרמו לכאן -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-amber-50 text-amber-900 text-xs uppercase sticky top-0">
+                            <tr>
+                                <th class="p-3">תיאור</th>
+                                <th class="p-3">קטגוריה</th>
+                                <th class="p-3">סכום חודשי</th>
+                                <th class="p-3">פעולה</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recurring-list" class="divide-y divide-slate-100">
+                            <!-- חיובים שוטפים יוזרמו לכאן -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
+
+        <!-- ==================== טאב 3: חיובים עתידיים ==================== -->
+        <div id="section-future" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl shadow-md border border-amber-100 p-6 space-y-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-amber-900">חיובים עתידיים ומתוכננים</h2>
+                    <p class="text-xs text-slate-500">תכנון הוצאות גדולות צפויות (כמו חתונות, טסט לרכב, ביטוחים)</p>
+                </div>
+
+                <form id="future-form" class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <input type="text" id="fut-name" required placeholder="שם האירוע/הוצאה (למשל: חתונה, טסט...)" class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                    <input type="date" id="fut-date" required class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                    <input type="number" id="fut-amount" step="0.01" required min="0.01" placeholder="סכום משוער (₪)" class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                    <button type="submit" class="bg-amber-700 hover:bg-amber-800 text-white font-medium py-2.5 rounded-xl transition duration-200 text-sm shadow-sm">
+                        הוסף חיוב עתידי
+                    </button>
+                </form>
+
+                <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-amber-50 text-amber-900 text-xs uppercase sticky top-0">
+                            <tr>
+                                <th class="p-3">תאריך צפוי</th>
+                                <th class="p-3">תיאור</th>
+                                <th class="p-3">סכום</th>
+                                <th class="p-3">פעולה</th>
+                            </tr>
+                        </thead>
+                        <tbody id="future-list" class="divide-y divide-slate-100">
+                            <!-- חיובים עתידיים יוזרמו לכאן -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== טאב 4: רשימת משאלות ==================== -->
+        <div id="section-wishlist" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl shadow-md border border-amber-100 p-6 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                    <div>
+                        <h2 class="text-lg font-semibold text-amber-900">רשימת משאלות (Wishlist)</h2>
+                        <p class="text-xs text-slate-500">המוצרים נבדקים מול היתרה הפנויה של החודש הנוכחי</p>
+                    </div>
+                    <div class="text-sm font-medium bg-white px-4 py-2 rounded-xl border border-amber-200 shadow-sm">
+                        יתרה פנויה לחודש: <span id="wish-net-display" class="font-bold text-blue-800">₪0.00</span>
+                    </div>
+                </div>
+
+                <form id="wish-form" class="flex flex-col md:flex-row gap-2">
+                    <input type="text" id="wish-name" required placeholder="שם המוצר (למשל: נעליים, שעון...)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                    <input type="number" id="wish-price" step="0.01" required min="0.01" placeholder="מחיר (₪)" class="w-full md:w-36 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-700 outline-none">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2.5 rounded-xl transition duration-200 text-sm shadow-sm">
+                        הוסף למשאלות
+                    </button>
+                </form>
+
+                <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-indigo-50 text-indigo-900 text-xs uppercase sticky top-0">
+                            <tr>
+                                <th class="p-3">מוצר</th>
+                                <th class="p-3">מחיר</th>
+                                <th class="p-3">סטטוס מול יתרת החודש</th>
+                                <th class="p-3">פעולה</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wish-list" class="divide-y divide-slate-100">
+                            <!-- משאלות יוזרמו לכאן -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== טאב 5: השוואת חודשים ==================== -->
+        <div id="section-comparison" class="space-y-6 hidden">
+            <div class="bg-white rounded-2xl shadow-md border border-amber-100 p-6 space-y-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-amber-900">השוואה בין חודשים</h2>
+                    <p class="text-xs text-slate-500">סיכום והשוואת הכנסות, הוצאות ומאזן לפי חודשים</p>
+                </div>
+
+                <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-amber-50 text-amber-900 text-xs uppercase sticky top-0">
+                            <tr>
+                                <th class="p-3">חודש</th>
+                                <th class="p-3">הכנסות</th>
+                                <th class="p-3">הוצאות (כולל שוטפים)</th>
+                                <th class="p-3">מאזן סופי</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-list" class="divide-y divide-slate-100">
+                            <!-- נתוני השוואה יוזרמו לכאן -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- טעינת ספריות Firebase מתוך CDN -->
+    <!-- סקריפט ניהול הלוגיקה והטאבים -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ==========================================
-        // החלף את הפרטים הבאים בנתונים מתוך ה-Firebase Console שלך!
-        // ==========================================
-        // ==========================================
-        // החלף את הפרטים הבאים בנתונים מתוך ה-Firebase Console שלך!
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDH91igdJtT4S30myXdR3c-QDvuHXvaZjI",
             authDomain: "family-budget-88d70.firebaseapp.com",
             projectId: "family-budget-88d70",
             storageBucket: "family-budget-88d70.firebasestorage.app",
-            messagingSenderId: "654098909587family-budget-88d70",
+            messagingSenderId: "654098909587",
             appId: "1:654098909587:web:c0fc8a280c530acf750066"
         };
 
-        // אתחול Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         let transactions = [];
+        let recurring = [];
+        let futures = [];
+        let wishes = [];
+        let currentNetBalance = 0;
         let expenseChart = null;
+
+        // ניהול מעבר טאבים
+        window.switchTab = function(tabName) {
+            const tabs = ['dashboard', 'recurring', 'future', 'wishlist', 'comparison'];
+            tabs.forEach(t => {
+                const section = document.getElementById(`section-${t}`);
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabName) {
+                    section.classList.remove('hidden');
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition bg-amber-700 text-white shadow-sm";
+                } else {
+                    section.classList.add('hidden');
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition text-slate-600 hover:text-slate-900";
+                }
+            });
+
+            const monthWrapper = document.getElementById('month-selector-wrapper');
+            if (tabName === 'dashboard') {
+                monthWrapper.style.display = 'flex';
+            } else if (tabName === 'comparison') {
+                monthWrapper.style.display = 'none';
+                renderComparison();
+            } else {
+                monthWrapper.style.display = 'none';
+            }
+        }
 
         const form = document.getElementById('transaction-form');
         const descInput = document.getElementById('description');
@@ -161,60 +345,159 @@
         const dateInput = document.getElementById('date');
         const monthSelector = document.getElementById('month-selector');
         
+        const recurringForm = document.getElementById('recurring-form');
+        const recName = document.getElementById('rec-name');
+        const recAmount = document.getElementById('rec-amount');
+        const recCategory = document.getElementById('rec-category');
+        const recurringListEl = document.getElementById('recurring-list');
+
+        const futureForm = document.getElementById('future-form');
+        const futName = document.getElementById('fut-name');
+        const futDate = document.getElementById('fut-date');
+        const futAmount = document.getElementById('fut-amount');
+        const futureListEl = document.getElementById('future-list');
+
+        const wishForm = document.getElementById('wish-form');
+        const wishNameInput = document.getElementById('wish-name');
+        const wishPriceInput = document.getElementById('wish-price');
+        const wishListEl = document.getElementById('wish-list');
+        const wishNetDisplay = document.getElementById('wish-net-display');
+
         const listEl = document.getElementById('transaction-list');
         const totalIncomeEl = document.getElementById('total-income');
         const totalExpenseEl = document.getElementById('total-expense');
         const netBalanceEl = document.getElementById('net-balance');
+        const comparisonListEl = document.getElementById('comparison-list');
 
-        // תאריך נוכחי וחודש נוכחי כברירת מחדל
         const today = new Date().toISOString().split('T')[0];
         dateInput.value = today;
         monthSelector.value = today.substring(0, 7);
 
         monthSelector.addEventListener('change', render);
 
-        // האזנה בזמן אמת לשינויים בבסיס הנתונים (Firestore)
-        onSnapshot(collection(db, "transactions"), (snapshot) => {
+        // האזנות ל-Firebase
+        onSnapshot(collection(db, "transactions"), (snap) => {
             transactions = [];
-            snapshot.forEach((docSnap) => {
-                transactions.push({
-                    id: docSnap.id,
-                    ...docSnap.data()
-                });
-            });
+            snap.forEach(d => transactions.push({ id: d.id, ...d.data() }));
             render();
         });
 
-        // הוספת תנועה חדשה לענן
-        form.addEventListener('submit', async function(e) {
+        onSnapshot(collection(db, "recurring"), (snap) => {
+            recurring = [];
+            snap.forEach(d => recurring.push({ id: d.id, ...d.data() }));
+            renderRecurring();
+            render();
+        });
+
+        onSnapshot(collection(db, "futures"), (snap) => {
+            futures = [];
+            snap.forEach(d => futures.push({ id: d.id, ...d.data() }));
+            renderFutures();
+        });
+
+        onSnapshot(collection(db, "wishes"), (snap) => {
+            wishes = [];
+            snap.forEach(d => wishes.push({ id: d.id, ...d.data() }));
+            renderWishes();
+        });
+
+        // הוספות
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const newTransaction = {
+            await addDoc(collection(db, "transactions"), {
                 date: dateInput.value,
                 description: descInput.value,
                 amount: parseFloat(amountInput.value),
                 type: typeInput.value,
                 category: categoryInput.value,
                 createdAt: Date.now()
-            };
-
-            try {
-                await addDoc(collection(db, "transactions"), newTransaction);
-                descInput.value = '';
-                amountInput.value = '';
-            } catch (error) {
-                console.error("שגיאה בהוספת תנועה: ", error);
-                alert("שגיאה בהוספת הנתון לענן.");
-            }
+            });
+            descInput.value = '';
+            amountInput.value = '';
         });
 
-        // מחיקת תנועה מהענן
-        window.deleteTransaction = async function(id) {
-            try {
-                await deleteDoc(doc(db, "transactions", id));
-            } catch (error) {
-                console.error("שגיאה במחיקת תנועה: ", error);
-            }
+        recurringForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "recurring"), {
+                name: recName.value,
+                amount: parseFloat(recAmount.value),
+                category: recCategory.value,
+                createdAt: Date.now()
+            });
+            recName.value = '';
+            recAmount.value = '';
+        });
+
+        futureForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "futures"), {
+                name: futName.value,
+                date: futDate.value,
+                amount: parseFloat(futAmount.value),
+                createdAt: Date.now()
+            });
+            futName.value = '';
+            futDate.value = '';
+            futAmount.value = '';
+        });
+
+        wishForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "wishes"), {
+                name: wishNameInput.value,
+                price: parseFloat(wishPriceInput.value),
+                createdAt: Date.now()
+            });
+            wishNameInput.value = '';
+            wishPriceInput.value = '';
+        });
+
+        window.deleteTransaction = async (id) => await deleteDoc(doc(db, "transactions", id));
+        window.deleteRecurring = async (id) => await deleteDoc(doc(db, "recurring", id));
+        window.deleteFuture = async (id) => await deleteDoc(doc(db, "futures", id));
+        window.deleteWish = async (id) => await deleteDoc(doc(db, "wishes", id));
+
+        window.buyWish = async (id, name, price) => {
+            if (!confirm(`האם לרכוש את המוצר "${name}" בעלות ₪${price.toFixed(2)}?`)) return;
+            await addDoc(collection(db, "transactions"), {
+                date: today,
+                description: `רכישה מרשימת משאלות: ${name}`,
+                amount: price,
+                type: 'expense',
+                category: 'שונות',
+                createdAt: Date.now()
+            });
+            await deleteDoc(doc(db, "wishes", id));
+        }
+
+        function renderRecurring() {
+            recurringListEl.innerHTML = '';
+            recurring.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-medium text-slate-800">${r.name}</td>
+                    <td class="p-3 text-slate-500"><span class="bg-slate-100 border px-2.5 py-1 rounded-lg text-xs">${r.category}</span></td>
+                    <td class="p-3 font-bold text-rose-700">₪${r.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="p-3"><button onclick="deleteRecurring('${r.id}')" class="text-slate-400 hover:text-rose-600 text-xs">מחק</button></td>
+                `;
+                recurringListEl.appendChild(tr);
+            });
+        }
+
+        function renderFutures() {
+            futureListEl.innerHTML = '';
+            futures.sort((a, b) => new Date(a.date) - new Date(b.date));
+            futures.forEach(f => {
+                const formattedDate = f.date ? f.date.split('-').reverse().join('/') : '';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-500 text-xs">${formattedDate}</td>
+                    <td class="p-3 font-medium text-slate-800">${f.name}</td>
+                    <td class="p-3 font-bold text-amber-700">₪${f.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="p-3"><button onclick="deleteFuture('${f.id}')" class="text-slate-400 hover:text-rose-600 text-xs">מחק</button></td>
+                `;
+                futureListEl.appendChild(tr);
+            });
         }
 
         function render() {
@@ -225,11 +508,8 @@
 
             const selectedMonth = monthSelector.value;
 
-            const filteredTransactions = transactions.filter(t => {
-                if (!t.date) return false;
-                return t.date.startsWith(selectedMonth);
-            });
-
+            // תנועות רגילות לחודש הנבחר
+            const filteredTransactions = transactions.filter(t => t.date && t.date.startsWith(selectedMonth));
             filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             filteredTransactions.forEach(t => {
@@ -237,35 +517,111 @@
                     totalIncome += t.amount;
                 } else {
                     totalExpense += t.amount;
-                    if (categoryTotals[t.category] !== undefined) {
-                        categoryTotals[t.category] += t.amount;
-                    }
+                    if (categoryTotals[t.category] !== undefined) categoryTotals[t.category] += t.amount;
                 }
 
                 const formattedDate = t.date ? t.date.split('-').reverse().join('/') : '';
-
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="p-3 text-gray-500 text-xs">${formattedDate}</td>
-                    <td class="p-3 font-medium text-gray-800">${t.description}</td>
-                    <td class="p-3 text-gray-500"><span class="bg-gray-100 px-2.5 py-1 rounded-lg text-xs">${t.category}</span></td>
-                    <td class="p-3 font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
-                        ${t.type === 'income' ? '+' : '-'}₪${t.amount.toLocaleString()}
-                    </td>
-                    <td class="p-3">
-                        <button onclick="deleteTransaction('${t.id}')" class="text-gray-400 hover:text-rose-600 text-xs">מחק</button>
-                    </td>
+                    <td class="p-3 text-slate-500 text-xs">${formattedDate}</td>
+                    <td class="p-3 font-medium text-slate-800">${t.description}</td>
+                    <td class="p-3 text-slate-500"><span class="bg-slate-100 border px-2.5 py-1 rounded-lg text-xs">${t.category}</span></td>
+                    <td class="p-3 font-bold ${t.type === 'income' ? 'text-emerald-700' : 'text-rose-700'}">${t.type === 'income' ? '+' : '-'}₪${t.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="p-3"><button onclick="deleteTransaction('${t.id}')" class="text-slate-400 hover:text-rose-600 text-xs">מחק</button></td>
                 `;
                 listEl.appendChild(tr);
             });
 
-            totalIncomeEl.innerText = `₪${totalIncome.toLocaleString()}`;
-            totalExpenseEl.innerText = `₪${totalExpense.toLocaleString()}`;
-            const net = totalIncome - totalExpense;
-            netBalanceEl.innerText = `₪${net.toLocaleString()}`;
-            netBalanceEl.className = `text-lg md:text-xl font-bold ${net >= 0 ? 'text-indigo-700' : 'text-rose-700'}`;
+            // הוספת חיובים שוטפים אוטומטית לחודש הנבחר
+            recurring.forEach(r => {
+                totalExpense += r.amount;
+                if (categoryTotals[r.category] !== undefined) categoryTotals[r.category] += r.amount;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-400 text-xs">שוטף חודשי</td>
+                    <td class="p-3 font-medium text-slate-800">${r.name} <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded mr-1">שוטף</span></td>
+                    <td class="p-3 text-slate-500"><span class="bg-slate-100 border px-2.5 py-1 rounded-lg text-xs">${r.category}</span></td>
+                    <td class="p-3 font-bold text-rose-700">-₪${r.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="p-3">-</td>
+                `;
+                listEl.appendChild(tr);
+            });
+
+            totalIncomeEl.innerText = `₪${totalIncome.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            totalExpenseEl.innerText = `₪${totalExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            
+            currentNetBalance = totalIncome - totalExpense;
+            netBalanceEl.innerText = `₪${currentNetBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            netBalanceEl.className = `text-lg md:text-xl font-bold ${currentNetBalance >= 0 ? 'text-blue-800' : 'text-rose-700'}`;
+
+            wishNetDisplay.innerText = `₪${currentNetBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
             updateChart(categoryTotals);
+            renderWishes();
+        }
+
+        function renderWishes() {
+            wishListEl.innerHTML = '';
+            wishes.forEach(w => {
+                const canAfford = currentNetBalance >= w.price;
+                const statusBadge = canAfford 
+                    ? '<span class="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full text-xs font-medium">✓ היתרה מאפשרת קנייה!</span>'
+                    : '<span class="bg-rose-100 text-rose-800 px-2.5 py-1 rounded-full text-xs font-medium">✗ אין עדיין יתרה מספקת</span>';
+
+                const buyButton = canAfford ? `<button onclick="buyWish('${w.id}', '${w.name}', ${w.price})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium ml-2">קנה עכשיו</button>` : '';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-medium text-slate-800">${w.name}</td>
+                    <td class="p-3 font-bold text-slate-700">₪${w.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="p-3">${statusBadge}</td>
+                    <td class="p-3 flex items-center">${buyButton}<button onclick="deleteWish('${w.id}')" class="text-slate-400 hover:text-rose-600 text-xs">הסר</button></td>
+                `;
+                wishListEl.appendChild(tr);
+            });
+        }
+
+        function renderComparison() {
+            comparisonListEl.innerHTML = '';
+            
+            // איסוף כל החודשים הקיימים מתנועות
+            const monthsSet = new Set();
+            transactions.forEach(t => {
+                if (t.date) monthsSet.add(t.date.substring(0, 7));
+            });
+            const months = Array.from(monthsSet).sort().reverse();
+
+            if (months.length === 0) {
+                comparisonListEl.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">אין עדיין נתונים להשוואה</td></tr>`;
+                return;
+            }
+
+            months.forEach(m => {
+                let mIncome = 0;
+                let mExpense = 0;
+
+                transactions.filter(t => t.date && t.date.startsWith(m)).forEach(t => {
+                    if (t.type === 'income') mIncome += t.amount;
+                    else mExpense += t.amount;
+                });
+
+                // הוספת חיובים שוטפים לכל חודש בהשוואה
+                recurring.forEach(r => mExpense += r.amount);
+
+                const mNet = mIncome - mExpense;
+                const [year, month] = m.split('-');
+                const formattedMonthName = `${month}/${year}`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-medium text-slate-800">${formattedMonthName}</td>
+                    <td class="p-3 font-bold text-emerald-700">₪${mIncome.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="p-3 font-bold text-rose-700">₪${mExpense.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="p-3 font-bold ${mNet >= 0 ? 'text-blue-800' : 'text-rose-700'}">₪${mNet.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                `;
+                comparisonListEl.appendChild(tr);
+            });
         }
 
         function updateChart(categoryTotals) {
@@ -273,9 +629,7 @@
             const dataValues = Object.values(categoryTotals);
             const hasData = dataValues.some(val => val > 0);
 
-            if (expenseChart) {
-                expenseChart.destroy();
-            }
+            if (expenseChart) expenseChart.destroy();
 
             expenseChart = new Chart(ctx, {
                 type: 'doughnut',
@@ -283,9 +637,7 @@
                     labels: Object.keys(categoryTotals),
                     datasets: [{
                         data: hasData ? dataValues : [1],
-                        backgroundColor: hasData ? [
-                            '#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'
-                        ] : ['#e5e7eb'],
+                        backgroundColor: hasData ? ['#d97706', '#db2777', '#ca8a04', '#059669', '#2563eb', '#7c3aed'] : ['#e2e8f0'],
                         borderWidth: 0
                     }]
                 },
@@ -293,13 +645,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: { family: 'Heebo', size: 11 },
-                                boxWidth: 10
-                            }
-                        }
+                        legend: { position: 'bottom', labels: { font: { family: 'Heebo', size: 11 }, color: '#334155', boxWidth: 10 } }
                     }
                 }
             });
